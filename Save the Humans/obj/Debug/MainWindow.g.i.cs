@@ -71,6 +71,14 @@ namespace Save_the_Humans {
         #line default
         #line hidden
         
+        
+        #line 81 "..\..\MainWindow.xaml"
+        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+        internal System.Windows.Controls.ProgressBar progressBar;
+        
+        #line default
+        #line hidden
+        
         private bool _contentLoaded;
         
         /// <summary>
@@ -118,6 +126,9 @@ namespace Save_the_Humans {
             
             #line default
             #line hidden
+            return;
+            case 5:
+            this.progressBar = ((System.Windows.Controls.ProgressBar)(target));
             return;
             }
             this._contentLoaded = true;
