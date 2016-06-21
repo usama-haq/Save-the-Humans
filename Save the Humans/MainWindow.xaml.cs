@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -22,13 +12,12 @@ namespace Save_the_Humans
     /// </summary>
     public partial class MainWindow : Window
     {
-        Random random = new Random();
+        private Random random = new Random();
 
-        DispatcherTimer enemyTimer = new DispatcherTimer();
-        DispatcherTimer targetTimer = new DispatcherTimer();
+        private DispatcherTimer enemyTimer = new DispatcherTimer();
+        private DispatcherTimer targetTimer = new DispatcherTimer();
 
-        bool humanCaptured = false;
-
+        private bool humanCaptured = false;
 
         public MainWindow()
         {
@@ -41,7 +30,7 @@ namespace Save_the_Humans
             targetTimer.Interval = TimeSpan.FromSeconds(.1);
         }
 
-        void targetTimer_Tick(object sender, EventArgs e)
+        private void targetTimer_Tick(object sender, EventArgs e)
         {
             progressBar.Value += 1;
             if (progressBar.Value >= progressBar.Maximum)
@@ -62,14 +51,27 @@ namespace Save_the_Humans
             }
         }
 
-        void enemyTimer_Tick(object sender, EventArgs e)
+        private void enemyTimer_Tick(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            AddEnemy();
         }
 
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
-            AddEnemy();
+            StartGame();
+        }
+
+        private void StartGame()
+        {
+            human.IsHitTestVisible = true;
+            humanCaptured = false;
+            progressBar.Value = 0;
+            startButton.Visibility = Visibility.Collapsed;
+            playArea.Children.Clear();
+            playArea.Children.Add(target);
+            playArea.Children.Add(human);
+            enemyTimer.Start();
+            targetTimer.Start();
         }
 
         private void AddEnemy()
@@ -82,6 +84,13 @@ namespace Save_the_Humans
 
             playArea.Children.Add(enemy);
 
+            enemy.MouseEnter += enemy_MouseEnter;
+        }
+
+        private void enemy_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (humanCaptured)
+                EndGame();
         }
 
         private void AnimateEnemy(ContentControl enemy, double from, double to, string propertyToAnimate)
@@ -104,6 +113,54 @@ namespace Save_the_Humans
 
             storyboard.Children.Add(animation);
             storyboard.Begin();
+        }
+
+        private void human_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (enemyTimer.IsEnabled)
+            {
+                humanCaptured = true;
+                human.IsHitTestVisible = false;
+            }
+        }
+
+        private void target_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (targetTimer.IsEnabled && humanCaptured)
+            {
+                progressBar.Value = 0;
+                Canvas.SetLeft(target, random.Next(100, (int)playArea.ActualWidth - 100));
+                Canvas.SetTop(target, random.Next(100, (int)playArea.ActualHeight - 100));
+                Canvas.SetLeft(human, random.Next(100, (int)playArea.ActualWidth - 100));
+                Canvas.SetTop(human, random.Next(100, (int)playArea.ActualHeight - 100));
+                humanCaptured = false;
+                human.IsHitTestVisible = true;
+            }
+        }
+
+        private void playArea_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point pointerPosition = e.GetPosition(null);
+            Point relativePosition = grid.TransformToVisual(playArea).Transform(pointerPosition);
+
+            if ((Math.Abs(relativePosition.X - Canvas.GetLeft(human)) > human.ActualWidth * 3) || (Math.Abs(relativePosition.Y - Canvas.GetTop(human)) > human.ActualHeight * 3))
+            {
+                humanCaptured = false;
+                human.IsHitTestVisible = true;
+            }
+            else
+            {
+                Canvas.SetLeft(human, relativePosition.X - human.ActualWidth / 2);
+                Canvas.SetTop(human, relativePosition.Y - human.ActualHeight / 2);
+            }
+        }
+
+        private void playArea_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (humanCaptured)
+            {
+                EndGame();
+            }
         }
     }
 }
