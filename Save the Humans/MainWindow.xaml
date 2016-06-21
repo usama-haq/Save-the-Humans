@@ -6,9 +6,55 @@
         Height="720">
     <Window.Resources>
         <ControlTemplate x:Key="EnemyTemplate" TargetType="{x:Type ContentControl}">
-            <Ellipse Width="100"
-                     Height="100"
-                     Fill="Red" />
+            <Grid>
+                <Ellipse Width="75"
+                         Height="100"
+                         Fill="Gray"
+                         Stroke="Black" />
+                <Ellipse Width="25"
+                         Height="35"
+                         Margin="40,20,70,0"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Top"
+                         Fill="Black"
+                         RenderTransformOrigin="0.5,0.5"
+                         Stroke="Black">
+                    <Ellipse.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform Angle="10" />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse Width="25"
+                         Height="35"
+                         Margin="70,20,40,0"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Top"
+                         Fill="Black"
+                         RenderTransformOrigin="0.5,0.5"
+                         Stroke="Black">
+                    <Ellipse.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform Angle="-10" />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse Width="35"
+                         Height="10"
+                         Margin="40,70,40,0"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Top"
+                         Fill="Black"
+                         RenderTransformOrigin="0.5,0.5"
+                         Stroke="Black" />
+
+            </Grid>
         </ControlTemplate>
     </Window.Resources>
     <Grid x:Name="grid" Background="Black">
